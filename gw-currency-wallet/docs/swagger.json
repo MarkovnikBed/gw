@@ -1,0 +1,351 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "это простой кошелёк - обменник",
+        "title": "Swagger WALLET API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/exchange": {
+            "post": {
+                "description": "Обмен",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rates"
+                ],
+                "summary": "Обмен валюты",
+                "parameters": [
+                    {
+                        "description": "Данные пользователя",
+                        "name": "user_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.exchange"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "токен авторизации",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "обмен осуществлён",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    },
+                    "400": {
+                        "description": "неверная валюта",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/exchange/rates": {
+            "get": {
+                "description": "Обмен",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rates"
+                ],
+                "summary": "Получение курса валют",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "токен авторизации",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.Rates"
+                        }
+                    },
+                    "500": {
+                        "description": "курсы валют на данный ммоент недоступны",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/login": {
+            "post": {
+                "description": "Авторизация пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Авторизация",
+                "parameters": [
+                    {
+                        "description": "Данные пользователя",
+                        "name": "user_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "токен авторизации",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    },
+                    "401": {
+                        "description": "неверный логин или пароль",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/register": {
+            "post": {
+                "description": "Регистрация нового пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Регистрация",
+                "parameters": [
+                    {
+                        "description": "Данные пользователя",
+                        "name": "user_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "пользователь успешно создан",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    },
+                    "400": {
+                        "description": "некорректный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    },
+                    "409": {
+                        "description": "пользователь с таким именем или почтой уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/wallet/deposit": {
+            "post": {
+                "description": "ВНЕСЕНИЕ СРЕДСТВ",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "operations"
+                ],
+                "summary": "Внесение средств",
+                "parameters": [
+                    {
+                        "description": "Данные пользователя",
+                        "name": "user_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AccountChange"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "токен авторизации",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "cчет пополнен",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    },
+                    "400": {
+                        "description": "неверная валюта",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/wallet/withdraw": {
+            "post": {
+                "description": "Получение СРЕДСТВ",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "operations"
+                ],
+                "summary": "Получение средств",
+                "parameters": [
+                    {
+                        "description": "Данные пользователя",
+                        "name": "user_data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.AccountChange"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "токен авторизации",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "cредства получены",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    },
+                    "400": {
+                        "description": "неверная валюта",
+                        "schema": {
+                            "$ref": "#/definitions/handlers.response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "handlers.AccountChange": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "currency": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.Rates": {
+            "type": "object",
+            "properties": {
+                "EUR": {
+                    "type": "number"
+                },
+                "RUB": {
+                    "type": "number"
+                },
+                "USD": {
+                    "type": "number"
+                }
+            }
+        },
+        "handlers.UserData": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "john@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "securepassword"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "john_doe"
+                }
+            }
+        },
+        "handlers.exchange": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "from_currency": {
+                    "type": "string"
+                },
+                "to_currency": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.response": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "new_balance": {
+                    "$ref": "#/definitions/handlers.Rates"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

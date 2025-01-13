@@ -1,0 +1,230 @@
+definitions:
+  handlers.AccountChange:
+    properties:
+      amount:
+        type: number
+      currency:
+        type: string
+    type: object
+  handlers.Rates:
+    properties:
+      EUR:
+        type: number
+      RUB:
+        type: number
+      USD:
+        type: number
+    type: object
+  handlers.UserData:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      password:
+        example: securepassword
+        type: string
+      username:
+        example: john_doe
+        type: string
+    type: object
+  handlers.exchange:
+    properties:
+      amount:
+        type: number
+      from_currency:
+        type: string
+      to_currency:
+        type: string
+    type: object
+  handlers.response:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      new_balance:
+        $ref: '#/definitions/handlers.Rates'
+      token:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: это простой кошелёк - обменник
+  title: Swagger WALLET API
+  version: "1.0"
+paths:
+  /api/v1/exchange:
+    post:
+      consumes:
+      - application/json
+      description: Обмен
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user_data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.exchange'
+      - description: токен авторизации
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: обмен осуществлён
+          schema:
+            $ref: '#/definitions/handlers.response'
+        "400":
+          description: неверная валюта
+          schema:
+            $ref: '#/definitions/handlers.response'
+      summary: Обмен валюты
+      tags:
+      - rates
+  /api/v1/exchange/rates:
+    get:
+      consumes:
+      - application/json
+      description: Обмен
+      parameters:
+      - description: токен авторизации
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.Rates'
+        "500":
+          description: курсы валют на данный ммоент недоступны
+          schema:
+            $ref: '#/definitions/handlers.response'
+      summary: Получение курса валют
+      tags:
+      - rates
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизация пользователя
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user_data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: токен авторизации
+          schema:
+            $ref: '#/definitions/handlers.response'
+        "401":
+          description: неверный логин или пароль
+          schema:
+            $ref: '#/definitions/handlers.response'
+      summary: Авторизация
+      tags:
+      - users
+  /api/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user_data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UserData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: пользователь успешно создан
+          schema:
+            $ref: '#/definitions/handlers.response'
+        "400":
+          description: некорректный запрос
+          schema:
+            $ref: '#/definitions/handlers.response'
+        "409":
+          description: пользователь с таким именем или почтой уже существует
+          schema:
+            $ref: '#/definitions/handlers.response'
+      summary: Регистрация
+      tags:
+      - users
+  /api/v1/wallet/deposit:
+    post:
+      consumes:
+      - application/json
+      description: ВНЕСЕНИЕ СРЕДСТВ
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user_data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AccountChange'
+      - description: токен авторизации
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: cчет пополнен
+          schema:
+            $ref: '#/definitions/handlers.response'
+        "400":
+          description: неверная валюта
+          schema:
+            $ref: '#/definitions/handlers.response'
+      summary: Внесение средств
+      tags:
+      - operations
+  /api/v1/wallet/withdraw:
+    post:
+      consumes:
+      - application/json
+      description: Получение СРЕДСТВ
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user_data
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.AccountChange'
+      - description: токен авторизации
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: cредства получены
+          schema:
+            $ref: '#/definitions/handlers.response'
+        "400":
+          description: неверная валюта
+          schema:
+            $ref: '#/definitions/handlers.response'
+      summary: Получение средств
+      tags:
+      - operations
+swagger: "2.0"

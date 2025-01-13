@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    container_name: postgres_db
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=final_wallet
+      - POSTGRES_USER=postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - app_network
+      
+  redis:
+      image: redis:latest
+      container_name: redis_cache
+      ports:
+        - "6379:6379"
+      networks:
+        - app_network
+          
+  my_app:
+    build: ./gw-currency-wallet
+    container_name: my_app
+    ports:
+      - "8080:8080"
+    networks:
+      - app_network
+    depends_on:
+      - db
+
+  my_grpc:
+    build: ./gw-exchanger
+    container_name: my_grpc
+    ports:
+      - "8081:8081"
+    networks:
+      - app_network
+    depends_on:
+      - db
+
+networks:
+  app_network:
+    driver: bridge
